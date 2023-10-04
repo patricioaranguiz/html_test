@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falabella DEV</title>
+</head>
+<body>
+    <div id="contenido">
+
+    </div>
+</body>
+<script type="application/javascript">
+    
+    let devUrl = 'https://as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net/api/Authentication/LoginAnonymous/TestVIDA';
+    let jwtTokenName = 'jwtToken_VIDA_CHILE';
+    let globalSkinName = 'globalskin_VIDA_CHILE';
+    let urlFlujo = "https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/pos/flow/VIDA/7";
+    let urlNubes = "https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/login";
+    let gaValue = ""
+
+    const queryString = window.location.search;
+    const params = new URLSearchParams(queryString);
+    if(params.get('url')) devUrl = params.get('url'); //Cambio de url segun lista
+    if(params.get('token')) jwtTokenName = params.get('token'); //Nombre de token segun lista
+    if(params.get('skin')) globalSkinName = params.get('skin'); //Nombre de la variable temporal
+    if(params.get('urlFlujo')) urlFlujo = params.get('urlFlujo'); //Url Flujo
+    if(params.get('urlNubes')) urlNubes = params.get('urlNubes'); //Url Login
+    if(params.get('_ga')) gaValue = params.get('_ga'); //parametros de Google Analitycs
+    
+    if(params.get('dni')){
+        sessionStorage.setItem("dni",params.get('dni')) //Si existe dni en la peticion lo seteamos
+    }
+    
+    const responses = []
+    fetch(devUrl)
+        .then(response => response.json())
+        .then(json => {
+            sessionStorage.setItem(jwtTokenName, json.data.token);
+            sessionStorage.setItem(globalSkinName, JSON.stringify(json.data.skin));
+            window.location.href = urlFlujo + "?_ga=" + gaValue;
+        })
+        .finally( () => {
+            responses.push({
+                jwtToken_VIDA_ASESORADO_CO: sessionStorage.getItem('jwtToken_VIDA_ASESORADO_CO'),
+                globalskin_VIDA_ASESORADO_CO: sessionStorage.getItem('globalskin_VIDA_ASESORADO_CO')
+            })
+        })
+        .catch(err => {
+            console.log('Solicitud fallida', err);
+            window.location.href = urlNubes + "?_ga=" + gaValue;            
+        });
+/*
+
+// QA Vida Chile 
+url: https://sx-b2c-dev.segurosfalabella.com/byPassDev.html
+?url=https://as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net/api/Authentication/LoginAnonymous/bypass
+&token=jwtToken_VIDA_CHILE&skin=globalskin_VIDA_CHILE&urlFlujo=https://sx-b2c.segurosfalabella.com/RECOMENDADOR/pos/flow/VIDA/6
+&urlNubes=https://sx-b2c-dev.segurosfalabella.com/VIDA_CHILE/login&dni=265950388
+
+Flujo Ok: https://sx-b2c.segurosfalabella.com/RECOMENDADOR/pos/flow/VIDA/6
+Flujo Ok: https://sx-b2c-dev.segurosfalabella.com/VIDA_CHILE/pos/flow/VIDA/6
+
+Flujo Normal: https://sx-b2c-dev.segurosfalabella.com/VIDA_CHILE/login
+
+
+// Prod Vida Chile 
+iframe: https://sx-b2c.segurosfalabella.com/byPassProd.html?url=https://sx-b2b.segurosfalabella.com/api/Authentication/LoginAnonymous/viclbypass&token=jwtToken_VIDA_CHILE&skin=globalskin_VIDA_CHILE
+Flujo Ok: https://sx-b2c.segurosfalabella.com/RECOMENDADOR/pos/flow/VIDA/6
+Flujo Normal: https://sx-b2c.segurosfalabella.com/RECOMENDADOR/login
+
+// Prod Vida Colombia 
+iframe: https://sx-b2c.segurosfalabella.com/byPassProd.html?url=https://sx-b2b.segurosfalabella.com/api/Authentication/LoginAnonymous/vicobypass&token=jwtToken_VIDA_ASESORADO_CO&skin=globalskin_VIDA_ASESORADO_CO
+Flujo Ok: https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/pos/flow/VIDA/7
+Flujo Normal: https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/login
+
+// Prod Vida Peru 
+iframe: https://sx-b2c.segurosfalabella.com/byPassProd.html?url=https://sx-b2b.segurosfalabella.com/api/Authentication/LoginAnonymous/vipebypass&token=jwtToken_RECOMENDADORPE&skin=globalskin_RECOMENDADORPE
+Flujo Ok: https://sx-b2c.segurosfalabella.com/RECOMENDADORPE/pos/flow/VIDA/8
+Flujo Normal: https://sx-b2c.segurosfalabella.com/RECOMENDADORPE/login
+
+//FS_DATOSASEGURADO_NRODOCUMENTO
+//FS_FECHA_EXPEDICION_DOC
+
+*/
+</script>
+</html>
