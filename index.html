@@ -2,28 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba</title>
+    <title>Falabella DEV</title>
 </head>
 <body>
-    <h1>Esto es una prueba</h1>
+    <div id="contenido">
+
+    </div>
 </body>
-<script>
-    window.addEventListener("message", function (e) {
-        console.log(e.origin);
-        const queryString = window.location.search;
-        const params = new URLSearchParams(queryString);
-        console.log(params.get('country'))
-        // if (e.origin !== "http://source-website.com") {
-        //     return
-        // }
-         
-        const data = JSON.parse(e.data)
-         
-        if (typeof data.name !== "undefined") {
-            localStorage.setItem("name", data.name)
-            console.log("Name is set: " + data.name)
+<script type="application/javascript">
+    var urlLogin = "https://as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net/api/Authentication/LoginAnonymous/TestVIDA";
+    var jwtTokenName = 'jwtToken_VIDA_CHILE';
+    var globalSkinName = 'globalskin_VIDA_CHILE';
+    window.addEventListener("load", function(){
+        fetch(urlLogin, {
+            method: 'GET', 
+            mode: 'cors', 
+            cache: "no-cache",
+            credentials: "same-origin"
+        })
+        .then(response => response.json())
+        .then(json => {
+            sessionStorage.setItem(jwtTokenName, json.data.token);
+            sessionStorage.setItem(globalSkinName, JSON.stringify(json.data.skin));
+        })
+        .catch(err => {
+            console.log('Solicitud fallida', err);            
+        });
+    });
+    
+    let urlFlujo = "https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/pos/flow/VIDA/7";
+    let urlNubes = "https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/login";
+    let gaValue = ""
+
+    window.addEventListener("message", function (event) {
+        if (event.source === parent) {
+            console.log('Recibimos el DNI',event.data)
+            sessionStorage.setItem("dni",event.data.dni)
+            fetch(devUrl)
+                .then(response => response.json())
+                .then(json => {
+                    sessionStorage.setItem(jwtToken, json.data.token);
+                    sessionStorage.setItem(globalSkin, JSON.stringify(json.data.skin));
+                    window.parent.postMessage({ message: { token: json.data.token } }, '*');
+                })
+                .catch(err => console.log('Solicitud de token fallida', err));
         }
-    })
+    });
+/*
+
+// QA Vida Chile 
+url: https://sx-b2c-dev.segurosfalabella.com/byPassDev.html
+?url=https://as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net/api/Authentication/LoginAnonymous/bypass
+&token=jwtToken_VIDA_CHILE&skin=globalskin_VIDA_CHILE&urlFlujo=https://sx-b2c.segurosfalabella.com/RECOMENDADOR/pos/flow/VIDA/6
+&urlNubes=https://sx-b2c-dev.segurosfalabella.com/VIDA_CHILE/login&dni=265950388
+
+Flujo Ok: https://sx-b2c.segurosfalabella.com/RECOMENDADOR/pos/flow/VIDA/6
+Flujo Ok: https://sx-b2c-dev.segurosfalabella.com/VIDA_CHILE/pos/flow/VIDA/6
+
+Flujo Normal: https://sx-b2c-dev.segurosfalabella.com/VIDA_CHILE/login
+
+
+// Prod Vida Chile 
+iframe: https://sx-b2c.segurosfalabella.com/byPassProd.html?url=https://sx-b2b.segurosfalabella.com/api/Authentication/LoginAnonymous/viclbypass&token=jwtToken_VIDA_CHILE&skin=globalskin_VIDA_CHILE
+Flujo Ok: https://sx-b2c.segurosfalabella.com/RECOMENDADOR/pos/flow/VIDA/6
+Flujo Normal: https://sx-b2c.segurosfalabella.com/RECOMENDADOR/login
+
+// Prod Vida Colombia 
+iframe: https://sx-b2c.segurosfalabella.com/byPassProd.html?url=https://sx-b2b.segurosfalabella.com/api/Authentication/LoginAnonymous/vicobypass&token=jwtToken_VIDA_ASESORADO_CO&skin=globalskin_VIDA_ASESORADO_CO
+Flujo Ok: https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/pos/flow/VIDA/7
+Flujo Normal: https://sx-b2c.segurosfalabella.com/VIDA_ASESORADO_CO/login
+
+// Prod Vida Peru 
+iframe: https://sx-b2c.segurosfalabella.com/byPassProd.html?url=https://sx-b2b.segurosfalabella.com/api/Authentication/LoginAnonymous/vipebypass&token=jwtToken_RECOMENDADORPE&skin=globalskin_RECOMENDADORPE
+Flujo Ok: https://sx-b2c.segurosfalabella.com/RECOMENDADORPE/pos/flow/VIDA/8
+Flujo Normal: https://sx-b2c.segurosfalabella.com/RECOMENDADORPE/login
+
+//FS_DATOSASEGURADO_NRODOCUMENTO
+//FS_FECHA_EXPEDICION_DOC
+
+*/
 </script>
 </html>
