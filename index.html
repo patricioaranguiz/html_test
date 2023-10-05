@@ -8,4 +8,19 @@
 <body>
     <h1>Esto es una prueba</h1>
 </body>
+<script>
+    window.addEventListener("message", function (e) {
+        console.log(e.origin);
+        if (e.origin !== "http://source-website.com") {
+            return
+        }
+         
+        const data = JSON.parse(e.data)
+         
+        if (typeof data.name !== "undefined") {
+            localStorage.setItem("name", data.name)
+            console.log("Name is set: " + data.name)
+        }
+    })
+</script>
 </html>
