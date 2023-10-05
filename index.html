@@ -13,7 +13,7 @@
         console.log(e.origin);
         const queryString = window.location.search;
         const params = new URLSearchParams(queryString);
-        console.log(params)
+        console.log(params.get('country'))
         // if (e.origin !== "http://source-website.com") {
         //     return
         // }
