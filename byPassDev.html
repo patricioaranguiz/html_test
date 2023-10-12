@@ -35,16 +35,16 @@
     var userBypassPE = 'bypasspe';
     var jwtTokenNamePE = 'jwtToken_PERU_ASESORADO';
     var globalSkinNamePE = 'globalskin_PERU_ASESORADO';
-
+    document.cookie = `jwt_b2b_RECOMENDADO_COLOMBIA=asdasdKJHdasdKHJALdhj`;
 
     window.addEventListener('load', function () {
+        
         var datos = params.get('d');
         console.log(datos);
         datos = atob(datos);
         console.log(datos)
         datos = JSON.parse(datos);
         console.log(datos);
-        debugger;
         userLogin = datos.c === 'CL' ? `${urlLogin}${userBypassCL}` : datos.c === 'CO' ? `${urlLogin}${userBypassCO}` : `${urlLogin}${userBypassPE}`;
         fetch(userLogin)
             .then(response => response.json())
@@ -59,12 +59,12 @@
                         sessionStorage.setItem('dni', event.data.dni)
                         break;
                     case 'CO':
-                        console.log(event.data);
                         sessionStorage.setItem(jwtTokenNameCO, jwtTokenValue);
                         sessionStorage.setItem(globalSkinNameCO, globalSkinValue);
-                        sessionStorage.setItem('tipoDocumento', event.data.tipoDocumento);
-                        sessionStorage.setItem('numeroDocumento', event.data.numeroDocumento);
-                        sessionStorage.setItem('fechaExpedicion', event.data.fechaExpedicion);
+                        sessionStorage.setItem('tipoDocumento', datos.td);
+                        sessionStorage.setItem('numeroDocumento', datos.d);
+                        sessionStorage.setItem('fechaExpedicion', datos.fe);
+                        
                         window.location.href = "/RECOMENDADO_COLOMBIA/pos/flow/VIDA/7";
                         break;
                     case 'PE':
@@ -81,7 +81,7 @@
             }).finally(() => {
                 switch (datos.c) {
                     case "CO":
-                        
+
                         break;
                 }
             });
