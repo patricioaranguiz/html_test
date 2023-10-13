@@ -35,8 +35,8 @@
     var userBypassPE = 'bypasspe';
     var jwtTokenNamePE = 'jwtToken_PERU_ASESORADO';
     var globalSkinNamePE = 'globalskin_PERU_ASESORADO';
-    document.cookie = `jwt_b2b_RECOMENDADO_COLOMBIA=asdasdKJHdasdKHJALdhj`;
-
+    
+    document.cookie = `jwt_b2b_RECOMENDADO_COLOMBIA=dasdasdAFAF;domain=as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net`;
     window.addEventListener('load', function () {
         
         var datos = params.get('d');
@@ -64,7 +64,9 @@
                         sessionStorage.setItem('tipoDocumento', datos.td);
                         sessionStorage.setItem('numeroDocumento', datos.d);
                         sessionStorage.setItem('fechaExpedicion', datos.fe);
-                        
+                        document.cookie = `jwt_b2b_RECOMENDADO_COLOMBIA=${jwtTokenValue};domain=as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net`;
+                        document.cookie = `jwt_b2b=${jwtTokenValue};domain=as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net`;
+                        document.cookie = `jwt_b2b_bypassco=${jwtTokenValue};domain=as-b2b-dev-8so6.ase-smartixsecondary-dev-cma8.p.azurewebsites.net`;
                         window.location.href = "/RECOMENDADO_COLOMBIA/pos/flow/VIDA/7";
                         break;
                     case 'PE':
